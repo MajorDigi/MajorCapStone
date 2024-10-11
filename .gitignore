@@ -1,0 +1,17 @@
+# Build files
+
+
+# IDE-specific files
+
+
+# Local configuration files
+.env
+config.json
+
+# Temporary files
+.DS_Store
+Thumbs.db
+
+# Node.js-specific
+node_modules/
+package-lock.json
