@@ -12,7 +12,7 @@ import Card from '../components/Card';
 const Home = () => {
     const [query, setQuery] = useState("");
     const { user } = useContext(AuthContext);
-    const { data, loading } = useFetch(`/entries/author/${user._id}`);
+    const { data, loading } = useFetch(`http://localhost:5500/api/entries/author/${user._id}`);
 
     const keys = ["title", "location", "date"];
 

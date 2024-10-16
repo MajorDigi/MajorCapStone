@@ -1,5 +1,4 @@
 // server/routes/entry.js
-// server/routes/entry.js
 import express from "express";
 import cloudinary from "cloudinary";
 import multer from "multer"; // Import Multer

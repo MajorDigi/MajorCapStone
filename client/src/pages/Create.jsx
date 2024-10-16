@@ -80,6 +80,23 @@ const Create = () => {
             };
         }
 
+        // const uploadPreset = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET;
+
+        // const list = await Promise.all(files.map(async (file) => {
+        //     const data = new FormData();
+        //     data.append("file", file);
+        //     data.append("upload_preset", uploadPreset); // Use the upload preset
+        //     return data;
+        // }));
+
+        // console.log("files:", list);
+
+        // newEntry = {
+        //     ...info,
+        //     author: user._id,
+        //     photos: list // This will still be an array of FormData, which might not be suitable for JSON.stringify
+        // };
+
         try {
             const response = await axios.post('http://localhost:5500/api/entries/', newEntry);
             navigate(`/view/${response?.data?._id}`);

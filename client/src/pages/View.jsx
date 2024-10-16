@@ -27,7 +27,7 @@ const View = () => {
     const location = useLocation();
     const id = location.pathname.split("/")[2];
     const { user } = useContext(AuthContext);
-    const { data } = useFetch(`/entries/${id}`)
+    const { data } = useFetch(`http://localhost:5500/api/entries/${id}`)
     const [slideNumber, setSlideNumber] = useState(0);
 
     const navigate = useNavigate();

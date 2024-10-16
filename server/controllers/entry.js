@@ -11,15 +11,15 @@ cloudinary.v2.config({
 
 export const createEntry = async (req, res, next) => {
     try {
-        const { title, location, date, entry, author, files } = req.body;
-
-        // Handle file uploads
-        const images = await Promise.all(
-            files.map(async (file) => {
-                const uploadResponse = await cloudinary.v2.uploader.upload(file.path);
-                return uploadResponse.secure_url; // Get the secure URL of the uploaded image
-            })
-        );
+        const { title, location, date, entry, author, photos, text } = req.body;
+      console.log(req.body,photos)
+        // // Handle file uploads
+        // const images = await Promise.all(
+        //     photos.map(async (file) => {
+        //         const uploadResponse = await cloudinary.v2.uploader.upload(file.path);
+        //         return uploadResponse.secure_url; // Get the secure URL of the uploaded image
+        //     })
+        // );
 
         // Create a new entry with the uploaded image URLs
         const newEntry = new Entry({
@@ -28,11 +28,13 @@ export const createEntry = async (req, res, next) => {
             date,
             entry,
             author,
-            photos: images, // Assuming your Entry model has a 'photos' field
+            text,
+            photos, // Assuming your Entry model has a 'photos' field
         });
 
         const savedEntry = await newEntry.save();
 
+        console.log(newEntry, savedEntry)
         // Update the user document
         const user = await User.findById(savedEntry.author);
         user.entries.push(savedEntry._id);
