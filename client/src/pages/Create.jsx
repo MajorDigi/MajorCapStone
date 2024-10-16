@@ -11,40 +11,45 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const Create = () => {
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
-    const [files, setFiles] = useState("");
+    const [files, setFiles] = useState([]);
     const [info, setInfo] = useState({});
 
     // Set the state to the data user passed 
     const handleChange = (e) => {
         setInfo((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-    }
+    };
 
-    // Post the state to database
+    // Post the state to the database
     const handleClick = async (e) => {
         e.preventDefault();
 
         let newEntry;
 
-        if (files) {
-            const list = await Promise.all(Object.values(files).map(async (file) => {
-                const data = new FormData();
-                data.append("file", file);
-                data.append("upload_preset", "upload"); // Your upload preset
+        if (files.length > 0) {
+            try {
+                const list = await Promise.all(Object.values(files).map(async (file) => {
+                    const data = new FormData();
+                    data.append("file", file);
+                    data.append("upload_preset", "upload"); // Your upload preset
 
-                // Use environment variable for Cloudinary URL
-                const uploadRes = await axios.post(
-                    `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`, // Use the cloud name from .env
-                    data, { withCredentials: false }
-                );
+                    // Use environment variable for Cloudinary URL
+                    const uploadRes = await axios.post(
+                        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`, // Use the cloud name from .env
+                        data, 
+                        { withCredentials: false }
+                    );
 
-                const { url } = uploadRes.data;
-                return url;
-            }));
+                    const { url } = uploadRes.data;
+                    return url;
+                }));
 
-            newEntry = {
-                ...info, author: user._id, photos: list
-            };
-
+                newEntry = {
+                    ...info, author: user._id, photos: list
+                };
+            } catch (error) {
+                console.error('Error uploading images:', error);
+                return; // Exit if upload fails
+            }
         } else {
             newEntry = {
                 ...info, author: user._id
@@ -55,12 +60,11 @@ const Create = () => {
             const response = await axios.post('http://localhost:5500/api/entries/', newEntry, {
                 withCredentials: false
             });
-
             navigate(`/view/${response?.data?._id}`);
         } catch (err) {
-            console.log(err);
+            console.log('Error creating entry:', err);
         }
-    }
+    };
 
     return (
         <div className='create'>
@@ -76,12 +80,12 @@ const Create = () => {
                             type="file"
                             id="file"
                             multiple
-                            onChange={(e) => setFiles(e.target.files)}
+                            onChange={(e) => setFiles(Array.from(e.target.files))}
                             style={{ display: "none" }}
                         />
                     </div>
                     <div className="uploadedPictures">
-                        {Array.from(files).map((file, index) => (
+                        {files.map((file, index) => (
                             <div className="upload_pic" key={index}>
                                 <img
                                     src={URL.createObjectURL(file)}
@@ -143,4 +147,5 @@ const Create = () => {
 }
 
 export default Create;
+
 
