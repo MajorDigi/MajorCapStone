@@ -1,5 +1,5 @@
 // client/src/pages/Create.jsx
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import axios from "axios";
 import { AuthContext } from '../authContext';
 import "../styles/create.css";
@@ -13,30 +13,44 @@ const Create = () => {
     const { user } = useContext(AuthContext);
     const [files, setFiles] = useState([]);
     const [info, setInfo] = useState({});
+    const [loading, setLoading] = useState(false);
 
     // Set the state to the data user passed 
     const handleChange = (e) => {
         setInfo((prev) => ({ ...prev, [e.target.id]: e.target.value }));
     };
 
+    const handleFilesChange = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        if (selectedFiles.length > 3) {
+            alert("You can only upload a maximum of 3 images.");
+            return;
+        }
+        setFiles(selectedFiles);
+    };
+
     // Post the state to the database
     const handleClick = async (e) => {
         e.preventDefault();
+        setLoading(true);
 
         let newEntry;
 
         if (files.length > 0) {
             try {
-                const list = await Promise.all(Object.values(files).map(async (file) => {
+                if (!process.env.REACT_APP_CLOUDINARY_CLOUD_NAME) {
+                    console.error('Cloudinary cloud name is not defined in the environment variables.');
+                    return; 
+                }
+
+                const list = await Promise.all(files.map(async (file) => {
                     const data = new FormData();
                     data.append("file", file);
                     data.append("upload_preset", "upload"); // Your upload preset
 
-                    // Use environment variable for Cloudinary URL
                     const uploadRes = await axios.post(
-                        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`, // Use the cloud name from .env
-                        data, 
-                        { withCredentials: false }
+                        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`, 
+                        data
                     );
 
                     const { url } = uploadRes.data;
@@ -48,6 +62,7 @@ const Create = () => {
                 };
             } catch (error) {
                 console.error('Error uploading images:', error);
+                setLoading(false);
                 return; // Exit if upload fails
             }
         } else {
@@ -57,14 +72,20 @@ const Create = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5500/api/entries/', newEntry, {
-                withCredentials: false
-            });
+            const response = await axios.post('http://localhost:5500/api/entries/', newEntry);
             navigate(`/view/${response?.data?._id}`);
         } catch (err) {
             console.log('Error creating entry:', err);
+        } finally {
+            setLoading(false);
         }
     };
+
+    useEffect(() => {
+        return () => {
+            files.forEach(file => URL.revokeObjectURL(file));
+        };
+    }, [files]);
 
     return (
         <div className='create'>
@@ -80,7 +101,7 @@ const Create = () => {
                             type="file"
                             id="file"
                             multiple
-                            onChange={(e) => setFiles(Array.from(e.target.files))}
+                            onChange={handleFilesChange}
                             style={{ display: "none" }}
                         />
                     </div>
@@ -138,8 +159,8 @@ const Create = () => {
                     ></textarea>
                 </div>
 
-                <button className='createBtn' onClick={handleClick}>
-                    Create Entry
+                <button className='createBtn' onClick={handleClick} disabled={loading}>
+                    {loading ? 'Creating...' : 'Create Entry'}
                 </button>
             </div>
         </div>
@@ -147,5 +168,3 @@ const Create = () => {
 }
 
 export default Create;
-
-
