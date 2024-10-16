@@ -14,8 +14,8 @@ const Create = () => {
     const [files, setFiles] = useState([]);
     const [info, setInfo] = useState({});
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
-    // Set the state to the data user passed 
     const handleChange = (e) => {
         setInfo((prev) => ({ ...prev, [e.target.id]: e.target.value }));
     };
@@ -29,27 +29,35 @@ const Create = () => {
         setFiles(selectedFiles);
     };
 
-    // Post the state to the database
     const handleClick = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setErrorMessage(""); // Reset error message
 
         let newEntry;
 
         if (files.length > 0) {
             try {
-                if (!process.env.REACT_APP_CLOUDINARY_CLOUD_NAME) {
-                    console.error('Cloudinary cloud name is not defined in the environment variables.');
+                // Check for necessary environment variables
+                const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+                const uploadPreset = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET;
+
+                if (!cloudName || !uploadPreset) {
+                    console.error('Cloudinary credentials are not defined in the environment variables.');
+                    setErrorMessage('Cloudinary credentials are not defined.');
+                    setLoading(false);
                     return; 
                 }
+
+                console.log("Cloudinary Cloud Name:", cloudName);
 
                 const list = await Promise.all(files.map(async (file) => {
                     const data = new FormData();
                     data.append("file", file);
-                    data.append("upload_preset", "upload"); // Your upload preset
+                    data.append("upload_preset", uploadPreset); // Use the upload preset
 
                     const uploadRes = await axios.post(
-                        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`, 
+                        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, 
                         data
                     );
 
@@ -62,8 +70,9 @@ const Create = () => {
                 };
             } catch (error) {
                 console.error('Error uploading images:', error);
+                setErrorMessage('Error uploading images. Please try again.'); // Set an error message
                 setLoading(false);
-                return; // Exit if upload fails
+                return;
             }
         } else {
             newEntry = {
@@ -76,6 +85,7 @@ const Create = () => {
             navigate(`/view/${response?.data?._id}`);
         } catch (err) {
             console.log('Error creating entry:', err);
+            setErrorMessage('Error creating entry. Please try again.'); // Set an error message
         } finally {
             setLoading(false);
         }
@@ -91,6 +101,7 @@ const Create = () => {
         <div className='create'>
             <Navbar />
             <div className="createContainer">
+                {errorMessage && <div className="error-message">{errorMessage}</div>} {/* Error message display */}
                 <div className="picsContainer">
                     <div className="formInput">
                         <h2>Upload Images (Max 3)</h2>
@@ -168,3 +179,4 @@ const Create = () => {
 }
 
 export default Create;
+
