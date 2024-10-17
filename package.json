@@ -1,16 +1,19 @@
 {
   "name": "majorcapstone",
   "version": "1.0.0",
-  "description": "",
+  "description": "A full-stack capstone project using Express and MongoDB",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "jest",
     "start": "node index.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon index.js",
+    "prod": "node index.js",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "keywords": [],
-  "author": "",
+  "author": "Your Name",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -25,7 +28,10 @@
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.1",
     "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.1.7"
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7",
+    "jest": "^29.0.0" // Add your Jest version here
   }
 }
