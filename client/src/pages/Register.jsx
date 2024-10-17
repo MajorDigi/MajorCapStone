@@ -34,16 +34,18 @@ function Register() {
         e.preventDefault();
 
         if (file) {
+            const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+            const uploadPreset = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET;
+
             const data = new FormData();
-
             data.append("file", file);
-            data.append("upload_preset", "upload");
+            data.append("upload_preset", uploadPreset); // Use the upload preset
 
-
+           
             try {
                 const uploadRes = await axios.post(
                     `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-                    data, { withcredentials: false }
+                    data
                 );
 
                 const { url } = uploadRes.data;
