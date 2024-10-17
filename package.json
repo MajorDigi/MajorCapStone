@@ -2,14 +2,12 @@
   "name": "majorcapstone",
   "version": "1.0.0",
   "description": "A full-stack capstone project using Express and MongoDB",
-  "main": "index.js",
+  "main": "server/index.js",
   "type": "module",
   "scripts": {
     "test": "jest",
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "prod": "node index.js",
-    "lint": "eslint .",
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js",
     "format": "prettier --write ."
   },
   "keywords": [],
