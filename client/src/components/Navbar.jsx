@@ -34,7 +34,7 @@ const Navbar = () => {
     return (
         <div className='navContainer'>
             <Link to="/">
-                <p className='navLogo'>Reminisce</p>
+                <p className='navLogo'>Travel Sense</p>
             </Link>
 
             <input type="checkbox" id='menu-bar' />
