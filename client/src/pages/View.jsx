@@ -13,7 +13,7 @@ const View = () => {
     const location = useLocation();
     const id = location.pathname.split("/")[2];
     const { user } = useContext(AuthContext);
-    const { data, loading, error, reFetch } = useFetch(`http://majorcapstone.onrender.com/api/entries/${id}`);
+    const { data, loading, error, reFetch } = useFetch(`http://localhost:5500/api/entries/${id}`);
     const [slideNumber, setSlideNumber] = useState(0);
     
     // State for the update fields
@@ -35,7 +35,7 @@ const View = () => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://majorcapstone.onrender.com/api/entries/${data._id}`);
+            await axios.delete(`http://localhost:5500/api/entries/${data._id}`);
             navigate('/');
         } catch (err) {
             console.log(err);
@@ -61,7 +61,7 @@ const View = () => {
                 text,
             };
 
-            await axios.put(`http://majorcapstone.onrender.com/api/entries/${data._id}`, updatedEntry);
+            await axios.put(`http://localhost:5500/api/entries/${data._id}`, updatedEntry);
             
             // Re-fetch the data to get the latest state
             await reFetch(); // Call reFetch method to refresh the data
