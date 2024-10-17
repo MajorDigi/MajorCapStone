@@ -55,7 +55,7 @@ function Register() {
                     profilePicture: url,
                 };
 
-                await axios.post("http://localhost:5500/api/users/register",
+                await axios.post("http://majorcapstone.onrender.com/api/users/register",
                     newUser, { withcredentials: false })
 
                 navigate("/login");
@@ -64,7 +64,7 @@ function Register() {
             }
         } else {
             try {
-                await axios.post("http://localhost:5500/api/users/register",
+                await axios.post("http://majorcapstone.onrender.com/api/users/register",
                     info, { withcredentials: false })
 
                 navigate("/login");

@@ -34,7 +34,7 @@ function Login() {
         e.preventDefault();
         dispatch({ type: "LOGIN_START" });
         try {
-            const res = await axios.post("http://localhost:5500/api/users/login",
+            const res = await axios.post("http://majorcapstone.onrender.com/api/users/login",
                 credentials);
             dispatch({
                 type: "LOGIN_SUCCESS",

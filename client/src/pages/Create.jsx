@@ -98,7 +98,7 @@ const Create = () => {
         // };
 
         try {
-            const response = await axios.post('http://localhost:5500/api/entries/', newEntry);
+            const response = await axios.post('http://majorcapstone.onrender.com/api/entries/', newEntry);
             navigate(`/view/${response?.data?._id}`);
         } catch (err) {
             console.log('Error creating entry:', err);
